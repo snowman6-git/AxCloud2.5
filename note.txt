@@ -1,0 +1,17 @@
+꼭 해야할일
+
+1. 세션 아이디 이중 + 난독화
+2. 파일 소유권자 디비
+3. 퍼블릭, 그리고 패스워드
+4. 로그 남기기
+5. 이상한 요청 차단 레이트리밋
+
+
+#고유한 키를 지정 uuid4 + UUID_KEY + Hash로 이중보안 
+# with open(os.path.join(os.path.dirname(__file__), "key/ax25.txt")) as key:
+#     UUID_KEY = key.read() #레포에선 example.txt 차후 형식 변경될수있음
+# key = hashlib.sha512((
+    #str(uuid4())
+    #   + UUID_KEY).encode()).hexdigest()
+# "UUID_KEY": UUID_KEY,
+# "Hashed_Key": hashlib.sha512((UUID_KEY).encode()).hexdigest()
