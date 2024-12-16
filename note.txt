@@ -6,6 +6,9 @@
 4. 로그 남기기
 5. 이상한 요청 차단 레이트리밋
 
+목표
+이전의 3웹 바닐라에서 사용한 1라우팅1페이지가 아닌 spa를 활용하여 진짜 백앤드를 쓸 때에만 호출하여
+백앤드 부담을 줄이기
 
 #고유한 키를 지정 uuid4 + UUID_KEY + Hash로 이중보안 
 # with open(os.path.join(os.path.dirname(__file__), "key/ax25.txt")) as key:

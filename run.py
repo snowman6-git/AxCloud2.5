@@ -15,6 +15,8 @@ def uuid_gen(): return str(uuid4())
 app.add_middleware(SessionMiddleware, secret_key=secret_key())
 #===================================================================
 
+uLink = {} #이미 세션을 가진후 인증과정을 위한 딕셔너리 링크된유저
+
 @app.get("/")
 def main(request: Request):
     return {
@@ -22,11 +24,24 @@ def main(request: Request):
         "usession" : request.session.get('usession'),
     }
 
+@app.get("/ulink")
+def main(request: Request):
+    return {
+        "uLink" : uLink,
+    }
+
 @app.post("/verify")
 def vertify(request: Request, idpw: idpw):
     #실제로 디비랑 상호작용하는 코드, 개발단게에선 제외
+    
+    #발급
+    uid = idpw.id
+    usession_id = uuid_gen()
+
+    uLink[uid] = usession_id #인증을 위한 userID + uuid4 쌍 저장
+
     request.session["uid"] = idpw.id
-    request.session['usession'] = uuid_gen()
+    request.session['usession'] = usession_id
     return 200
 
 # @app.get("/items/{item_id}")
