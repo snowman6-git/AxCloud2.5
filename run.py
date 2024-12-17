@@ -5,7 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 import os, hashlib, random
 from uuid import uuid4
-from lib.SGears import secret_key
+from lib.SGears import secret_key, Linked
 #===================================================================
 app = FastAPI()
 class idpw(BaseModel):
@@ -13,22 +13,41 @@ class idpw(BaseModel):
     pw: str
 def uuid_gen(): return str(uuid4())
 app.add_middleware(SessionMiddleware, secret_key=secret_key())
+linked = Linked() #uid와 session의 인증과 추가 역할
 #===================================================================
 
-uLink = {} #이미 세션을 가진후 인증과정을 위한 딕셔너리 링크된유저
 
 @app.get("/")
 def main(request: Request):
-    return {
-        "uid" : request.session.get('uid'),
-        "usession" : request.session.get('usession'),
-    }
+    uid = request.session.get('uid')
+    usession_id = request.session.get('usession')
+    # print(uid, usession_id)
+    key_check = linked.is_real(uid, usession_id)
+    if key_check:
+        return {
+            "uid" : uid,
+            "usession" : usession_id,
+            "is_real?" : key_check,
+        }
+    else: return "need login"
 
-@app.get("/ulink")
-def main(request: Request):
-    return {
-        "uLink" : uLink,
-    }
+    # if uid == None: return "You need login Agein" #세션을 보유하지만 서버에 인증이값이 없을경우
+    # if uLink.get(uid) == usession_id: return "perfect!" #세션을 보유하고, 인증값 마저 일치한다면
+    # elif uLink.get(uid) != usession_id: return "" #세션을 보유했으나, 인증값이 조작, 일치하지않는다면
+    # else: return "you need Login Agein!"
+
+    # return {
+    #     "uid" : uid,
+    #     "usession" : request.session.get('usession'),
+    #     "uLink" : uLink,
+    #     "uLink vertify" : uLink.get(uid),
+    # }
+
+# @app.get("/ulink")
+# def main(request: Request):
+#     return {
+#         "uLink" : uLink,
+#     }
 
 @app.post("/verify")
 def vertify(request: Request, idpw: idpw):
@@ -38,7 +57,7 @@ def vertify(request: Request, idpw: idpw):
     uid = idpw.id
     usession_id = uuid_gen()
 
-    uLink[uid] = usession_id #인증을 위한 userID + uuid4 쌍 저장
+    linked.new(uid, usession_id)
 
     request.session["uid"] = idpw.id
     request.session['usession'] = usession_id
