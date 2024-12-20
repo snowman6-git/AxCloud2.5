@@ -5,7 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 import os, hashlib, random
 from uuid import uuid4
-from lib.SGears import secret_key, Linked, DBM
+from lib.SGears import secret_key, text_to_hash, Linked, DBM
 #===================================================================
 app = FastAPI()
 class idpw(BaseModel):
@@ -23,17 +23,22 @@ db = DBM() #테스트용 sqlite3 차후에 숙달되면 꼭 mysql쓰도록 하�
 
 @app.get("/") #메인페이지니까 가능하면 vue보내주는 방향으로 변경할것
 def main(request: Request):
-    uid = request.session.get('uid')
-    usession_id = request.session.get('usession')
-    # print(uid, usession_id)
-    key_check = linked.is_real(uid, usession_id)
-    if key_check:
-        return {
-            "uid" : uid,
-            "usession" : usession_id,
-            "is_real?" : key_check,
-        }
-    else: return "need login"
+    # uid = idpw.id
+    # usession_id = uuid_gen()
+    # request.session["uid"] = idpw.id
+    # request.session['usession'] = usession_id
+    return 200
+    # uid = request.session.get('uid')
+    # usession_id = request.session.get('usession')
+    # # print(uid, usession_id)
+    # key_check = linked.is_real(uid, usession_id)
+    # if key_check:
+    #     return {
+    #         "uid" : uid,
+    #         "usession" : usession_id,
+    #         "is_real?" : key_check,
+    #     }
+    # else: return "need login"
 
 #파일저장 ============================================
 @app.post("/upload") #나중에 이름 바꿀수 있으면 변경
@@ -44,13 +49,19 @@ def upload(request: Request, file: file_infos):
     #실제로 파일을 올렸을때의 코드
     if linked.is_real(uid, usession_id):
         print("Chein OK!")
+
+        db.run(f"CREATE TABLE IF NOT EXISTS File_infos(uid text, filehash text, filename text, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+        db.run(f"INSERT INTO File_infos(uid, filehash, filename) Values('{uid}', '{text_to_hash(file.name)}', '{file.name}');") #나중엔 실제 업로드 청크단위 저장 업데이트로 해싱한걸 넣기
         print(file.name)
         return {
             "uid" : uid,
             "filename" : file.name
         }
     else:
-        return "NO"
+        return {
+            "uid" : uid,
+            "usession" : usession_id
+        }
 
 @app.post("/files") #나중에 이름 바꿀수 있으면 변경
 def upload(request: Request):
@@ -60,9 +71,14 @@ def upload(request: Request):
     #디비로 쿼리해서 내가 가진게 뭔지 리턴할것
     if linked.is_real(uid, usession_id):
         print("Chein OK!")
-        return {
-            "uid" : uid,
-        }
+        sub = db.run(f"SELECT filename, created FROM File_infos WHERE uid = '{uid}'").fetchall() # '<- 이거 추가안하면 못찾음
+
+        print(sub)
+        
+        return sub
+        # return {
+        #     "uid" : uid,
+        # }
     else:
         return "NO"
 #인증관련 ============================================

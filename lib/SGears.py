@@ -1,4 +1,4 @@
-import os, sqlite3
+import os, sqlite3, hashlib
 
 KEY = os.path.join(os.path.dirname(__file__), "..", "key")
 LOCATION = os.path.join(os.path.dirname(__file__), ".")
@@ -7,7 +7,16 @@ class DBM:
     def __init__(self):
         self.db = sqlite3.connect(f"{LOCATION}/main.db", check_same_thread=False)
         self.db_command = self.db.cursor()
-    
+
+    def run(self, command):
+        print(f"excute: {command}...")
+        try:
+            result = self.db_command.execute(command)
+            self.db.commit()
+            print(f"excute: {command}...OK!")
+            return result
+        except Exception as E:
+            print(E)
 
 class Linked():
     def __init__(self):
@@ -32,7 +41,9 @@ class Linked():
 
 
 
-
+def text_to_hash(text):
+    hashed = hashlib.sha256((text).encode()).hexdigest()
+    return hashed
 
 def secret_key():
     try:
