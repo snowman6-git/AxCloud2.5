@@ -1,6 +1,13 @@
-import os
+import os, sqlite3
 
 KEY = os.path.join(os.path.dirname(__file__), "..", "key")
+LOCATION = os.path.join(os.path.dirname(__file__), ".")
+
+class DBM:
+    def __init__(self):
+        self.db = sqlite3.connect(f"{LOCATION}/main.db", check_same_thread=False)
+        self.db_command = self.db.cursor()
+    
 
 class Linked():
     def __init__(self):
@@ -22,6 +29,7 @@ class Linked():
         # elif ulink_sessionid != usession_id: #uid와 usession이 다르다면
         else:
             return False
+
 
 
 
