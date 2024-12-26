@@ -68,7 +68,9 @@ def upload(request: Request):
     uid = request.session.get('uid')
     usession_id = request.session.get('usession')
 
-    #디비로 쿼리해서 내가 가진게 뭔지 리턴할것
+    #디비로 쿼리해서 내가 가진게 뭔지 리턴할것 OK
+    #차후 디비에 몇몇 항목추가할것
+    #공개모드로 할땐 그냥 public이라는 테이블 넣어서 공유자, 비번, 파일hash이렇게 하는것도 좋아보임
     if linked.is_real(uid, usession_id):
         print("Chein OK!")
         sub = db.run(f"SELECT filename, created FROM File_infos WHERE uid = '{uid}'").fetchall() # '<- 이거 추가안하면 못찾음

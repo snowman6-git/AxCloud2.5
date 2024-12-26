@@ -1,0 +1,34 @@
+:root{
+  font-family:
+  Inter,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  Oxygen,
+  Ubuntu,
+  Cantarell,
+  'Fira Sans',
+  'Droid Sans',
+  'Helvetica Neue',
+  sans-serif;
+  
+}
+
+html, body, #app{
+  /* overflow: hidden; */
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
+  /* scroll-behavior: smooth; */
+  box-sizing: border-box;
+  width: 100%; height: 100%;
+  background-color: #1f1f1f;
+  color: white;
+  margin: 0; padding: 0;
+}
+
+h1{
+  margin: 0;
+} 
