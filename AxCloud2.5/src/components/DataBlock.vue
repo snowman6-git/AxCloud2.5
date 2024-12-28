@@ -62,9 +62,14 @@ defineProps({
 }
 #download{
   /* display: none; */
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+
   opacity: 0;
   transform: scaleY(-1);
-  width: 1rem; height: 1rem;
+  /* width: 1rem;  */
+  height: 100%;
   text-align: center;
   border-radius: 0.25rem;
 }

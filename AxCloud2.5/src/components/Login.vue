@@ -2,23 +2,6 @@
 
   <div id="panel">
 
-    <div id="side" class="active">
-      <progress value="50" max="100"></progress>
-      <div>FreeSpace 11.9GB/25GB</div>
-    </div>
-
-
-    <div id="screen">
-      <button @click="addComponent">Add Component</button>
-      <button @click="close">close side</button>
-      <div style="width: 100%;" v-for="(component, index) in components" :key="index">
-        <DataBlock :name="component.filename" :size="component.filesize" :format="component.fileformat" :date="component.filedate"/>
-        <!-- 컴포넌트에서 수신하는 props값="밑에서 추가하는 컴포넌트.키와값" -->
-        <!-- :name="component.msg" -->
-        <!-- <DataBlock name="ax.7z" size="7.92MB" format="7z" date="2024/12/12"/> -->
-      </div>
-    </div>
-  
   </div>
 
 </template>

@@ -14,7 +14,6 @@
   sans-serif;
   
 }
-
 html, body, #app{
   /* overflow: hidden; */
   display: flex;
@@ -27,6 +26,24 @@ html, body, #app{
   background-color: #1f1f1f;
   color: white;
   margin: 0; padding: 0;
+}
+
+.idpw{
+  outline: none;
+  background: none; 
+  text-align: center;
+  border: none; 
+  color: white;
+  /* opacity: 50%; */
+}
+.idpw:-webkit-autofill,
+.idpw:-webkit-autofill:hover,
+.idpw:-webkit-autofill:focus,
+.idpw:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-transition: background-color 9999s ease-out;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: white;
 }
 
 h1{

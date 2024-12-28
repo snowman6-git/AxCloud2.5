@@ -33,14 +33,17 @@ defineProps({
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  border-left: 0.25rem solid white;
+  /* border-left: 0.25rem solid white; */
+  border: 1px solid red;
 }
-#center{
+
+#center, #endmenu{
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: row;
 }
+
 #title{
   display: flex; align-items: center;
 }

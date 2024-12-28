@@ -9,12 +9,10 @@ defineProps({
 
 <template>
   <div id="status">
-    <table border="0">
-
-      <!-- <tr>
+    <!-- <table border="0">
+      <tr>
         <td colspan="1" style="opacity: 0.5; font-size: 0.5rem;">NowRunning</td>
-      </tr> -->
-
+      </tr>
       <tr>
         <td rowspan="2">
           <img id="appicon" src="/logo.svg" alt="">
@@ -24,7 +22,7 @@ defineProps({
       <tr>
         <td style="opacity: 0.5; font-size: 0.6rem;">Network Storage</td>
       </tr>
-    </table>
+    </table> -->
 
   </div>
 </template>
@@ -42,5 +40,6 @@ defineProps({
   align-items: center;
   justify-content: space-between;
   border: 0.1rem solid white;
+  box-sizing: border-box;
 }
 </style>
