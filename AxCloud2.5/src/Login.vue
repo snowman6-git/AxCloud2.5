@@ -1,17 +1,20 @@
 <script setup>
+import axios from 'axios';
+
 function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms))}
 document.addEventListener("keydown", (event) => {if (event.key === "Enter") {event.preventDefault(); document.querySelector("#submit").click()}})
+
 
 document.addEventListener("DOMContentLoaded", function() {
   const talk = document.querySelector("#talk")
   const nameplate = document.querySelector("#nameplate")
 });
 
-async function nameplate_return(){
+async function nameplate_return(ment){
+  talk.textContent = ment
   setTimeout(function() {
     nameplate.classList.remove("send")
   }, 500)
-  talk.textContent = "뭐라도 써서 주셔야죠."
   talk.classList.add("active")
   await sleep(3000)
   talk.classList.remove("active")
@@ -25,25 +28,42 @@ async function submit() {
 
 
   if (pw.value == "" || id.value == ""){
-    nameplate_return()
+    nameplate_return("뭐라도 써서 주셔야죠.")
   }
-  const url = 'http://127.0.0.1:8000/login';
-  const formData = new FormData();
-  formData.append('id', id.value)
-  formData.append('pw', pw.value);
-  await fetch(url, {
-    method: 'POST',
-    body: formData,
-    credentials: "include"
+  axios.post('http://localhost:8000/login', {
+    id: id.value,
+    pw: pw.value
   })
-  .then((response) => response.text())
-  .then((result) => {
-    pw.value == ""
-    if (result == 200){
-      window.location.href = "#/Home"
+  .then(function (response) {
+    if (response == 200){
+      nameplate_return("인증 완료되었습니다.")
     }
-    else{relock()}
+
+    if (response != 200){
+      nameplate_return()
+    }
   })
+  .catch(function (error) {
+    console.error('Error:', error);
+  });
+
+  // const url = 'localhost:8000/login';
+  // const formData = new FormData();
+  // formData.append('id', id.value)
+  // formData.append('pw', pw.value);
+  // await fetch(url, {
+  //   method: 'POST',
+  //   body: formData,
+  //   credentials: "include"
+  // })
+  // .then((response) => response.text())
+  // .then((result) => {
+  //   pw.value == ""
+  //   if (result == 200){
+  //     window.location.href = "#/Home"
+  //   }
+  //   else{relock()}
+  // })
   
 }
 </script>

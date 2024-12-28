@@ -2,12 +2,28 @@ from typing import Union
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 import os, hashlib, random
 from uuid import uuid4
 from lib.SGears import secret_key, text_to_hash, Linked, DBM
 #===================================================================
 app = FastAPI()
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8000",
+    "http://localhost:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class idpw(BaseModel):
     id: str
     pw: str
@@ -101,7 +117,7 @@ def vertify(request: Request):
 @app.post("/login") #나중에 이름 바꿀수 있으면 변경
 def vertify(request: Request, idpw: idpw):
     #실제로 디비랑 상호작용하는 코드, 개발단게에선 제외
-    
+    print(idpw)
     #발급
     uid = idpw.id
     usession_id = uuid_gen()
