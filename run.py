@@ -37,7 +37,9 @@ app.add_middleware(SessionMiddleware, secret_key=secret_key())
 linked = Linked() #uid와 session의 인증과 추가 역할
 db = DBM() #테스트용 sqlite3 차후에 숙달되면 꼭 mysql쓰도록 하기
 #===================================================================
+# db.run(f"CREATE TABLE IF NOT EXISTS Files(uid text, filehash text, filename text, filesize text, text created TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
 
+# db.run("DROP Table Files;")
 
 @app.get("/") #메인페이지니까 가능하면 vue보내주는 방향으로 변경할것
 def main(request: Request):
@@ -68,8 +70,8 @@ def upload(request: Request, file: file_infos):
     if linked.is_real(uid, usession_id):
         print("Chein OK!")
 
-        db.run(f"CREATE TABLE IF NOT EXISTS File_infos(uid text, filehash text, filename text, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
-        db.run(f"INSERT INTO File_infos(uid, filehash, filename) Values('{uid}', '{text_to_hash(file.name)}', '{file.name}');") #나중엔 실제 업로드 청크단위 저장 업데이트로 해싱한걸 넣기
+        # db.run(f"CREATE TABLE IF NOT EXISTS File_infos(uid text, filehash text, filename text, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+        # db.run(f"INSERT INTO File_infos(uid, filehash, filename) Values('{uid}', '{text_to_hash(file.name)}', '{file.name}');") #나중엔 실제 업로드 청크단위 저장 업데이트로 해싱한걸 넣기
         print(file.name)
         return {
             "uid" : uid,
@@ -92,9 +94,11 @@ def upload(request: Request):
     #공개모드로 할땐 그냥 public이라는 테이블 넣어서 공유자, 비번, 파일hash이렇게 하는것도 좋아보임
     if linked.is_real(uid, usession_id):
         print("Chein OK!")
-        sub = db.run(f"SELECT json_object('filename', filename, 'date', created) FROM File_infos WHERE uid = '{uid}'").fetchall() # '<- 이거 추가안하면 못찾음
+        try: 
+            sub = db.run(f"SELECT json_object('filename', filename, 'date', created) FROM File_infos WHERE uid = '{uid}'").fetchall() # '<- 이거 추가안하면 못찾음
+            return sub
+        except: return "NO"
         # print(sub)
-        return sub
     else:
         return "NO"
 
@@ -117,8 +121,14 @@ def vertify(request: Request):
 
 @app.post("/login") #나중에 이름 바꿀수 있으면 변경
 def login(request: Request, response: Response, idpw: idpw):
+    if idpw.id == "" or idpw.pw == "":
+        return 403
+
     uid = idpw.id
     usession_id = uuid_gen()
+
+    #디비로 확인하는코드
+
     linked.new(uid, usession_id)
     response.set_cookie(
         key="uid",
@@ -134,32 +144,6 @@ def login(request: Request, response: Response, idpw: idpw):
         secure=False,   # HTTPS 환경에서는 True로 설정
     )
     return {"code": "OK"}
-    # #실제로 디비랑 상호작용하는 코드, 개발단게에선 제외
-    # if idpw.id == "" or idpw.pw == "":
-    #     return 403
-    # #발급
-    # uid = idpw.id
-    # usession_id = uuid_gen()
-    # linked.new(uid, usession_id)
-    # #
-    # #  response.set_cookie(key="uid", value=idpw.id)
-    # # response.set_cookie(key="usession'", value=usession_id)
-    # response.set_cookie(
-    #     key="uid",
-    #     value=idpw.id,
-    #     httponly=True,
-    #     samesite='None',
-    #     secure=False
-    # )
-    # response.set_cookie(
-    #     key="usession",
-    #     value=usession_id, #request.session['usession'],
-    #     httponly=True,  # JavaScript에서 접근 불가
-    #     samesite='None',  # 필요에 따라 조정
-    #     secure=False      # HTTPS 환경에서는 True로 설정
-    # )
-    # return 200
-
 
 #인증관련 ============================================
 if __name__ == '__main__':

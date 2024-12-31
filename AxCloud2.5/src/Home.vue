@@ -13,8 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
   const loading = document.querySelector("#loading")
 });
 
-
-
 axios.post('http://localhost:3160/verify', {
 })
 .then(function (response) {
@@ -49,7 +47,6 @@ axios.post('http://localhost:3160/verify', {
 
 <template>
   <Loding id="loading"/>
-
   <Head/>
   <Screen>
     <!-- <component :is="currentView" /> -->

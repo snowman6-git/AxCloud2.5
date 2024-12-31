@@ -20,7 +20,6 @@ defineProps({
         <!-- <div>검색</div> -->
       </div>
       <div id="endmenu">
-        <img id="profile" class="hicon" src="/profile.jpeg" alt="">
       </div>
   </div>
 </template>
