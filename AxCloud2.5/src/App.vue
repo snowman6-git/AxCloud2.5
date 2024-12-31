@@ -7,6 +7,7 @@ import { ref, computed } from 'vue'
 import Login from './Login.vue'
 import Home from './Home.vue'
 import NotFound from './NotFound.vue'
+import Welcome from './Welcome.vue'
 
 // 나중에 홈으로 옮기기
 // import Head from './components/Head.vue'
@@ -15,7 +16,8 @@ import NotFound from './NotFound.vue'
 // import SoundSix from './components/SoundSix.vue'
 
 const routes = {
-  '/': Login,
+  '/': Welcome,
+  '/login': Login,
   '/Home': Home
 }
 const currentPath = ref(window.location.hash)

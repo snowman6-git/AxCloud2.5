@@ -9,8 +9,8 @@
 
 
     <div id="screen">
-      <button @click="addComponent">Add Component</button>
-      <button @click="close">close side</button>
+      <!-- <button @click="addComponent">Add Component</button> -->
+      <!-- <button @click="close">close side</button> -->
       <div style="width: 100%;" v-for="(component, index) in components" :key="index">
         <DataBlock :name="component.filename" :size="component.filesize" :format="component.fileformat" :date="component.filedate"/>
         <!-- 컴포넌트에서 수신하는 props값="밑에서 추가하는 컴포넌트.키와값" -->
@@ -24,9 +24,11 @@
 </template>
 
 <script setup>
+import axios from 'axios';
+axios.defaults.withCredentials = true; 
+
 const close = () => {
   document.querySelector("#side").classList.remove("active")
-
 }
 
 import { ref } from 'vue';
@@ -34,15 +36,15 @@ import DataBlock from './DataBlock.vue';
 
 // components 배열을 ref로 정의
 const components = ref([]);
-
-components.value.push({ filename: `Filename ${components.value.length + 1}`, filesize:"7.92MB", fileformat: "7z", filedate: "1/11"});
-
-// 컴포넌트를 추가하는 메서드
-const addComponent = () => {
-  components.value.push({ filename: `Filename ${components.value.length + 1}`, filesize:"7.92MB", fileformat: "7z", filedate: "1/11"});
-};
+axios.post('http://localhost:3160/files', {
+}).then(function (response) {
+  response["data"].forEach(function(DataBlock) {
+    let infos = JSON.parse(DataBlock[0])
+    console.log(infos)
+    components.value.push({ filename: infos["filename"], filesize:"7.92MB", fileformat: "7z", filedate: infos["date"]});
+  })
+})
 </script>
-
 <style scoped>
 #panel{
   width: 100%; height: 100%;
@@ -70,8 +72,6 @@ const addComponent = () => {
 #side.active > *{
   opacity: 1;
 }
-
-
 #screen {
   /* padding: 0.5rem; */
   width: 100%; height: 100%;
