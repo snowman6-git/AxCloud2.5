@@ -1,52 +1,45 @@
 <script setup>
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms))}
 document.addEventListener("keydown", (event) => {if (event.key === "Enter") {event.preventDefault(); document.querySelector("#submit").click()}})
 
-
-document.addEventListener("DOMContentLoaded", function() {
-  const talk = document.querySelector("#talk")
-  const nameplate = document.querySelector("#nameplate")
-});
-
-async function nameplate_return(ment){
-  talk.textContent = ment
-  setTimeout(function() {
-    nameplate.classList.remove("send")
-  }, 500)
-  talk.classList.add("active")
-  await sleep(3000)
-  talk.classList.remove("active")
+async function fail() {
+  nameplate.classList.add("fail")
+  await sleep(2000)
+  nameplate.className = '';
 }
 async function submit() {
   const id = document.querySelector("#id")
   const pw = document.querySelector("#pw")
 
-  nameplate.classList.add("send")
-
-
+  nameplate.classList.add("scan")
+  scanner.classList.add("active")
+  await sleep(1000)
+  scanner.classList.remove("active")
 
   if (pw.value == "" || id.value == ""){
-    nameplate_return("뭐라도 써서 주셔야죠.")
+    fail()
   }
-  axios.post('http://localhost:8000/login', {
+  axios.post('http://localhost:3160/login', {
     id: id.value,
     pw: pw.value
   })
   .then(function (response) {
-    if (response == 200){
-      nameplate_return("인증 완료되었습니다.")
+    if (response.data["code"] == "OK"){
+      setTimeout(function() {
+        nameplate.classList.add("ok")
+        window.location.href = "#/Home"
+      }, 500)
     }
-
-    if (response != 200){
-      nameplate_return()
+    else{
+      fail()
     }
   })
   .catch(function (error) {
     console.error('Error:', error);
   });
-
   // const url = 'localhost:8000/login';
   // const formData = new FormData();
   // formData.append('id', id.value)
@@ -69,14 +62,10 @@ async function submit() {
 </script>
 
 <template>
-  <div id="talk">
-    O O O
-  </div>
-
   <div id="panel">
-    
     <!-- =============== -->
     <div id="nameplate">
+      <div id="scanner"></div>
       <div id="login-title">
         
         <table border="0">
@@ -111,7 +100,7 @@ async function submit() {
 </template>
 
 <style scoped>
-#talk{
+/* #talk{
   opacity: 0;
   margin: 0 auto;
   margin-top: 1rem;
@@ -128,16 +117,27 @@ async function submit() {
   opacity: 1;
   transform: translateY(0vh);
   width: 20rem; height: 5rem;
-}
+} */
 
 #panel{
-  z-index: 1;
-
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
   flex-direction: column;
 }
-
+#scanner{
+  opacity: 0;
+  transform: translateY(-1rem);
+  width: 20rem; height: 0.25rem;
+  background-color: red;
+}
+#scanner.active{
+  opacity: 1;
+  animation: scanning 1.5s ease-in-out infinite alternate;
+}
+@keyframes scanning {
+  0%{transform: translateY(-5rem)}
+  100%{transform: translateY(30rem)}
+}
 #info{
   width: 100%;
   display: flex; align-items: center; justify-content: center;
@@ -146,12 +146,8 @@ async function submit() {
 #id{
   font-size: 1.5rem;
 }
-
-#nameplate.send{
-  transform: translateY(-80vh);
-}
 #nameplate{
-  transition: 2s ease;
+  transition: 0.5s all;
   /* background-color: ; */
   width: 18rem; height: 25rem;
   border: 0.01rem solid white;
@@ -162,9 +158,29 @@ async function submit() {
 
   justify-content: space-between;
   flex-direction: column;
+  /* box-sizing: border-box; */
+  
+  /* position: fixed; */
   
   /* padding: 1rem; */
   /* transform: rotate(-10deg); */
+}
+#nameplate.scan{
+  transform: scale(0.95);
+  opacity: 0.5;
+}
+#nameplate.ok{
+  opacity: 1;
+  /* transform: rotate(-90deg); */
+  width: 100vw; height: 100vh;
+  /* border: 0.01rem solid green; */
+}
+#nameplate.ok > *{
+  opacity: 0;
+}
+#nameplate.fail{
+  opacity: 1;
+  border: 0.01rem solid red;
 }
 
 #login-title{

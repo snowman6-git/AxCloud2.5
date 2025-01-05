@@ -46,6 +46,7 @@ defineProps({
 <style scoped>
 
 #block{
+  z-index: 98;
   padding: 0.5rem;
   width: 100%; height: 2.5rem;
   border-bottom: 0.01rem solid rgba(255, 255, 255, 0.5);
@@ -56,6 +57,8 @@ defineProps({
 #block:hover{
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.2);
+  /* background-color: red; */
+  
   /* transition: all 0.25s; */
   /* transform: scale(1.025); */
   /* border: 1px solid white; */

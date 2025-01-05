@@ -39,10 +39,39 @@ class Linked():
         else:
             return False
 
+class HashHub():
+    def __init__(self):
+        self.__hash_ckpt = {} #uid와 useesionid를 딕셔너리로 엮는 유저체인
+    def new(self, target):
+        if  not target in self.__hash_ckpt: #없으면
+            self.__hash_ckpt[target] = hashlib.sha512() #추가
+    def hash_update(self, target, value):
+        self.__hash_ckpt[target].update(value)
+    def hash_result(self, target):
+        a = self.__hash_ckpt[target].hexdigest()
+        print(a)
+        return a
 
+        
+# def file_to_hash(path):
+#     filehash_SHA512 = hashlib.sha512()
+#     print(path)
+#     with open(path, 'rb') as f:
+#         while True:
+#             chunk = f.read(1024 * 1024)  # 1MB 단위로 읽기
+#             if not chunk:
+#                 break
+#             filehash_SHA512.update(chunk)  # 해시 업데이트
+#         print(filehash_SHA512.hexdigest())
+#         return filehash_SHA512.hexdigest()
+
+# file_to_hash("F:\CatsimWD\Server\AxCloud2.5\.\Files/Archive.zip")
+
+def to_mb(value):
+    return value * 1024 ** 2
 
 def text_to_hash(text):
-    hashed = hashlib.sha256((text).encode()).hexdigest()
+    hashed = hashlib.sha512((text).encode()).hexdigest()
     return hashed
 
 def secret_key():
