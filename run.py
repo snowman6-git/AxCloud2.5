@@ -63,7 +63,6 @@ def main():
     #     }
     # else: return "need login"
 #파일저장 ============================================
-file_hashes = {} #이따 해시 허브라는걸로 따로 만들기
 # "c50dad24b4e2558a9e1832d461bcfd059f7c93ec28dc55eea61f3a5e13be8c27bb6899f6db203a542e839b6321185da4c3e19e2d06a3ca885133ec852d0d2e7b"
 @app.post("/upload")
 async def upload(request: Request, filename: str = Form(...), chunk: UploadFile = File(...), chunk_now: int = Form(...), chunk_max: int = Form(...), size: str = Form(...), ):
@@ -83,8 +82,11 @@ async def upload(request: Request, filename: str = Form(...), chunk: UploadFile 
             if chunk_now >= chunk_max:
                 print("Checking File HASH")
                 file_hash = hashhub.hash_result(file_id)
-                db.run(f"INSERT INTO Files(uid, filehash, filename) Values('{uid}', '{file_hash}', '{filename}');") #업로더 | 파일해시(중복방지용) | 업로더가 정한 파일이름
+                # self.db_command .execute(", (id,)).fetchone()
+                a = db.run(f"SELECT * FROM Files WHERE filehash = '{file_hash}'").fetchone() #이미 실존하는 파일인지 확인 (중복방지)
+                print(a)
 
+                db.run(f"INSERT INTO Files(uid, filehash, filename) Values('{uid}', '{file_hash}', '{filename}');") #업로더 | 파일해시(중복방지용) | 업로더가 정한 파일이름
             with open(save, "ab") as f:  # 파일에 청크 추가
                 f.write(content)
             return 200
